@@ -1,105 +1,105 @@
 $(document).ready(function () {
-    const amenities = {};
-    const states = {};
-    const cities = {};
-    let places = {};
+  const amenities = {};
+  const states = {};
+  const cities = {};
+  let places = {};
 
-    // Initial setup
-    $('.amenities input[type="checkbox"]').prop('checked', false);
-    $('.container .filters h2 input[type="checkbox"]').prop('checked', false);
-    $('.container .filters .popover li input[type="checkbox"]').prop('checked', false);
-    $('#api_status').addClass('not_available');
+  // Initial setup
+  $('.amenities input[type="checkbox"]').prop('checked', false);
+  $('.container .filters h2 input[type="checkbox"]').prop('checked', false);
+  $('.container .filters .popover li input[type="checkbox"]').prop('checked', false);
+  $('#api_status').addClass('not_available');
 
-    // Click event handler for state checkboxes
-    $('.container .filters h2 input[type="checkbox"]').click(function () {
-        const select = '.' + $(this).attr('data-id');
-        if ($(this).prop('checked')) {
-            states[$(this).attr('data-id')] = $(this).attr('data-name');
-            $(select).prop('checked', true);
-        } else {
-            $(select).prop('checked', false);
-            delete states[$(this).attr('data-id')];
-        }
-        updateLocations();
-    });
-
-    // Click event handler for city checkboxes
-    $('.container .filters .locations .popover li input[type="checkbox"]').click(function () {
-        if ($(this).prop('checked')) {
-            cities[$(this).attr('data-id')] = $(this).attr('data-name');
-        } else {
-            delete cities[$(this).attr('data-id')];
-        }
-        updateLocations();
-    });
-
-    // Click event handler for amenities checkboxes
-    $('.amenities input[type="checkbox"]').click(function () {
-        if ($(this).prop('checked')) {
-            amenities[$(this).attr('data-id')] = $(this).attr('data-name');
-        } else {
-            delete amenities[$(this).attr('data-id')];
-        }
-        updateAmenities();
-    });
-
-    // AJAX request for API status
-    $.ajax({
-        type: 'GET',
-        url: 'http://0.0.0.0:5001/api/v1/status/',
-        success: function (data) {
-            $('#api_status').toggleClass('available', data.status === 'OK');
-            $('#api_status').toggleClass('not_available', data.status !== 'OK');
-        }
-    });
-
-    // Click event handler for search button
-    $('.container .filters button').click(function () {
-        searchPlaces.amenities = Object.keys(amenities);
-        searchPlaces.states = Object.keys(states);
-        searchPlaces.cities = Object.keys(cities);
-
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            url: 'http://0.0.0.0:5001/api/v1/places_search',
-            data: JSON.stringify(searchPlaces),
-            success: function (data) {
-                renderPlaces(data);
-            }
-        });
-    });
-
-    // Initial AJAX request for places
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        url: 'http://0.0.0.0:5001/api/v1/places_search',
-        data: '{}',
-        success: function (data) {
-            renderPlaces(data);
-        }
-    });
-
-    // Update amenities display
-    function updateAmenities() {
-        $('.amenities H4').text(Object.values(amenities).join(', '));
+  // Click event handler for state checkboxes
+  $('.container .filters h2 input[type="checkbox"]').click(function () {
+    const select = '.' + $(this).attr('data-id');
+    if ($(this).prop('checked')) {
+      states[$(this).attr('data-id')] = $(this).attr('data-name');
+      $(select).prop('checked', true);
+    } else {
+      $(select).prop('checked', false);
+      delete states[$(this).attr('data-id')];
     }
+    updateLocations();
+  });
 
-    // Update locations display
-    function updateLocations() {
-        const locations = Object.values(states).concat(Object.values(cities));
-        $('.locations H4').text(locations.join(', '));
+  // Click event handler for city checkboxes
+  $('.container .filters .locations .popover li input[type="checkbox"]').click(function () {
+    if ($(this).prop('checked')) {
+      cities[$(this).attr('data-id')] = $(this).attr('data-name');
+    } else {
+      delete cities[$(this).attr('data-id')];
     }
+    updateLocations();
+  });
 
-    // Render places
-    function renderPlaces(data) {
-        places = data;
-        $('.places').empty();
-        places.forEach((place) => {
-            const html = `
+  // Click event handler for amenities checkboxes
+  $('.amenities input[type="checkbox"]').click(function () {
+    if ($(this).prop('checked')) {
+      amenities[$(this).attr('data-id')] = $(this).attr('data-name');
+    } else {
+      delete amenities[$(this).attr('data-id')];
+    }
+    updateAmenities();
+  });
+
+  // AJAX request for API status
+  $.ajax({
+    type: 'GET',
+    url: 'http://0.0.0.0:5001/api/v1/status/',
+    success: function (data) {
+      $('#api_status').toggleClass('available', data.status === 'OK');
+      $('#api_status').toggleClass('not_available', data.status !== 'OK');
+    }
+  });
+
+  // Click event handler for search button
+  $('.container .filters button').click(function () {
+    searchPlaces.amenities = Object.keys(amenities);
+    searchPlaces.states = Object.keys(states);
+    searchPlaces.cities = Object.keys(cities);
+
+    $.ajax({
+      type: 'POST',
+      contentType: 'application/json',
+      dataType: 'json',
+      url: 'http://0.0.0.0:5001/api/v1/places_search',
+      data: JSON.stringify(searchPlaces),
+      success: function (data) {
+        renderPlaces(data);
+      }
+    });
+  });
+
+  // Initial AJAX request for places
+  $.ajax({
+    type: 'POST',
+    contentType: 'application/json',
+    dataType: 'json',
+    url: 'http://0.0.0.0:5001/api/v1/places_search',
+    data: '{}',
+    success: function (data) {
+      renderPlaces(data);
+    }
+  });
+
+  // Update amenities display
+  function updateAmenities () {
+    $('.amenities H4').text(Object.values(amenities).join(', '));
+  }
+
+  // Update locations display
+  function updateLocations () {
+    const locations = Object.values(states).concat(Object.values(cities));
+    $('.locations H4').text(locations.join(', '));
+  }
+
+  // Render places
+  function renderPlaces (data) {
+    places = data;
+    $('.places').empty();
+    places.forEach((place) => {
+      const html = `
                 <article>
 
                     <div class="title_box">
@@ -128,7 +128,7 @@ $(document).ready(function () {
                     </div>
                     <div class="description">${place.description}</div>
                 </article>`;
-            $('.places').append(html);
-        });
-    }
+      $('.places').append(html);
+    });
+  }
 });

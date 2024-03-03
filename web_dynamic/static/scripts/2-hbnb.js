@@ -29,7 +29,7 @@ $(document).ready(function () {
     $apiStatus.addClass('not_available');
   });
 
-  function updateAmenitiesHeader() {
+  function updateAmenitiesHeader () {
     let amenitiesText = '';
     let count = 0;
 
